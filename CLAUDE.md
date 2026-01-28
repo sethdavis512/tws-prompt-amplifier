@@ -39,7 +39,7 @@ This is a standard Electron app with two distinct processes:
 
 - Uses `openai` npm package v4.24.0
 - API calls happen entirely in the renderer process with `dangerouslyAllowBrowser: true`
-- Default model: `gpt-4o`
+- Default model: `gpt-5.2`
 - Temperature: 0.7, Max tokens: 1500
 - System prompt is fully customizable via settings panel
 
@@ -65,6 +65,7 @@ The renderer sends two IPC messages to the main process:
 ## Keyboard Shortcuts
 
 Implemented in renderer's `keydown` event listener:
+
 - `Cmd/Ctrl + Enter` - Trigger prompt amplification
 - `Escape` - Hide window
 
@@ -79,6 +80,7 @@ Implemented in renderer's `keydown` event listener:
 ## Testing
 
 No automated tests exist. Manual testing checklist:
+
 1. Tray icon appears in system tray
 2. Click tray to open/close window
 3. Window positions correctly near tray
@@ -92,6 +94,7 @@ No automated tests exist. Manual testing checklist:
 ## Build Configuration
 
 The `package.json` includes electron-builder configuration for three platforms:
+
 - **macOS**: Category set to "productivity"
 - **Windows**: Targets NSIS installer
 - **Linux**: Targets AppImage
@@ -99,6 +102,7 @@ The `package.json` includes electron-builder configuration for three platforms:
 ## Commit Style
 
 Follow Conventional Commits format:
+
 - `feat:` - New features
 - `fix:` - Bug fixes
 - `docs:` - Documentation changes

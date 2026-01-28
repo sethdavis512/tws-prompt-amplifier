@@ -667,7 +667,7 @@ Return ONLY the improved prompt, without any explanation or meta-commentary. The
         const systemPrompt = systemPromptInput.value.trim() || defaultSystemPrompt;
 
         const response = await openai.chat.completions.create({
-          model: 'gpt-4o',
+          model: 'gpt-5.2',
           messages: [
             {
               role: 'system',

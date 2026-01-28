@@ -5,7 +5,7 @@ A tray-based Electron app that takes your simple prompts and transforms them int
 ## Features
 
 - **System Tray Integration**: Lives in your system tray for quick access
-- **Prompt Enhancement**: Uses GPT-4 to improve your prompts with better context, structure, and clarity
+- **Prompt Enhancement**: Uses GPT-5.2 to improve your prompts with better context, structure, and clarity
 - **One-Click Copy**: Easily copy the amplified prompt to your clipboard
 - **Keyboard Shortcuts**:
   - `Ctrl/Cmd + Enter` - Amplify prompt
@@ -22,11 +22,13 @@ A tray-based Electron app that takes your simple prompts and transforms them int
 ### Installation
 
 1. Install dependencies:
+
    ```bash
    npm install
    ```
 
 2. Run the app:
+
    ```bash
    npm start
    ```
@@ -69,7 +71,7 @@ Edit the system prompt in `index.html` to customize how prompts are improved.
 ## Tech Stack
 
 - Electron
-- OpenAI GPT-4 API
+- OpenAI GPT-5.2 API
 - Vanilla JavaScript/HTML/CSS
 
 ## License
