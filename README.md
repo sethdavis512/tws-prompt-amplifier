@@ -1,6 +1,6 @@
 # Prompt Amplifier
 
-A tray-based Electron app that takes your simple prompts and transforms them into comprehensive, well-structured prompts using OpenAI's GPT-4.
+A tray-based Electron app that takes your simple prompts and transforms them into comprehensive, well-structured prompts using OpenAI's GPT-5.2.
 
 ## Features
 

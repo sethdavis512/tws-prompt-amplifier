@@ -5,9 +5,11 @@ const {
     Menu,
     ipcMain,
     nativeImage,
-    screen
+    screen,
+    dialog
 } = require('electron');
 const path = require('path');
+const fs = require('fs');
 
 let tray = null;
 let mainWindow = null;
@@ -141,4 +143,28 @@ ipcMain.on('hide-window', function () {
 ipcMain.on('quit-app', function () {
     app.isQuitting = true;
     app.quit();
+});
+
+// Save prompt to file handler
+ipcMain.handle('save-prompt', async function (event, content) {
+    const result = await dialog.showSaveDialog(mainWindow, {
+        title: 'Save Amplified Prompt',
+        defaultPath: 'amplified-prompt.md',
+        filters: [
+            { name: 'Text Files', extensions: ['txt'] },
+            { name: 'Markdown', extensions: ['md'] },
+            { name: 'All Files', extensions: ['*'] }
+        ]
+    });
+
+    if (result.canceled || !result.filePath) {
+        return { success: false, canceled: true };
+    }
+
+    try {
+        fs.writeFileSync(result.filePath, content, 'utf8');
+        return { success: true, filePath: result.filePath };
+    } catch (err) {
+        return { success: false, error: err.message };
+    }
 });
