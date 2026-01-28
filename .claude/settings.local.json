@@ -10,7 +10,19 @@
       "Bash(convert:*)",
       "WebFetch(domain:github.com)",
       "Bash(curl:*)",
-      "WebFetch(domain:polar.sh)"
+      "WebFetch(domain:polar.sh)",
+      "Bash(git -C /Users/seth/repositories/tws-prompt-amplifier log --oneline -10)",
+      "WebFetch(domain:docs.polar.sh)",
+      "mcp__context7__resolve-library-id",
+      "mcp__context7__query-docs",
+      "Bash(test:*)",
+      "Bash(ls:*)",
+      "Bash(sips:*)",
+      "Bash(node -e:*)",
+      "Bash(xxd:*)",
+      "Bash(pngcheck:*)",
+      "Bash(node_modules/.bin/electron:*)",
+      "Bash(file:*)"
     ]
   }
 }
