@@ -1,0 +1,33 @@
+{
+  "name": "prompt-amplifier",
+  "version": "1.0.0",
+  "description": "A tray app that amplifies your prompts using OpenAI",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder"
+  },
+  "keywords": ["electron", "tray", "openai", "prompt"],
+  "author": "Seth",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^28.0.0",
+    "electron-builder": "^24.9.1"
+  },
+  "dependencies": {
+    "openai": "^4.24.0"
+  },
+  "build": {
+    "appId": "com.promptamplifier.app",
+    "productName": "Prompt Amplifier",
+    "mac": {
+      "category": "public.app-category.productivity"
+    },
+    "win": {
+      "target": "nsis"
+    },
+    "linux": {
+      "target": "AppImage"
+    }
+  }
+}

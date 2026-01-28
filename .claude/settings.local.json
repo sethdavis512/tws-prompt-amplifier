@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm start)",
+      "Bash(pkill:*)",
+      "Bash(node create-icon.js:*)",
+      "WebSearch",
+      "WebFetch(domain:www.electronjs.org)",
+      "Bash(node create-template-icon.js:*)",
+      "Bash(convert:*)",
+      "WebFetch(domain:github.com)",
+      "Bash(curl:*)",
+      "WebFetch(domain:polar.sh)"
+    ]
+  }
+}

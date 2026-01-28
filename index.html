@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prompt Amplifier</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Share+Tech+Mono&display=swap');
+
+    :root {
+      --neon-green: #f59e0b;
+      --neon-green-dim: #d97706;
+      --neon-green-glow: rgba(245, 158, 11, 0.5);
+      --neon-green-shadow: rgba(245, 158, 11, 0.8);
+      --black: #000000;
+      --dark-gray: #0a0a0a;
+      --panel-gray: #111111;
+      --border-gray: #1a1a1a;
+      --text-gray: #666666;
+      --signal-red: #ff0033;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Rajdhani', sans-serif;
+      background: var(--black);
+      background-image:
+        repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(245, 158, 11, 0.03) 2px, rgba(245, 158, 11, 0.03) 4px);
+      color: var(--neon-green);
+      height: 100vh;
+      overflow: hidden;
+      user-select: none;
+      position: relative;
+    }
+
+    body::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: radial-gradient(ellipse at center, transparent 0%, var(--black) 100%);
+      pointer-events: none;
+    }
+
+    .container {
+      padding: 16px;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      z-index: 1;
+      border: 2px solid var(--border-gray);
+      background: linear-gradient(180deg, var(--dark-gray) 0%, var(--black) 100%);
+      box-shadow: inset 0 1px 0 rgba(0, 255, 65, 0.1);
+    }
+
+    /* Title bar */
+    .title-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      padding: 8px 12px;
+      background: var(--panel-gray);
+      border: 1px solid var(--border-gray);
+      border-left: 3px solid var(--neon-green);
+      position: relative;
+    }
+
+    .title-bar::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      background: var(--neon-green);
+      box-shadow: 0 0 10px var(--neon-green-glow), 0 0 20px var(--neon-green-glow);
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.6; }
+    }
+
+    .title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--neon-green);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-family: 'Share Tech Mono', monospace;
+      text-shadow: 0 0 10px var(--neon-green-glow);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .title::before {
+      content: '⚡';
+      font-size: 16px;
+      animation: flicker 3s infinite;
+    }
+
+    @keyframes flicker {
+      0%, 100% { opacity: 1; }
+      41%, 43% { opacity: 0.8; }
+      45%, 47% { opacity: 1; }
+    }
+
+    .close-btn {
+      background: var(--black);
+      border: 1px solid var(--border-gray);
+      color: var(--text-gray);
+      font-size: 18px;
+      cursor: pointer;
+      padding: 4px 10px;
+      transition: all 0.2s;
+      font-weight: 700;
+      font-family: 'Share Tech Mono', monospace;
+    }
+
+    .close-btn:hover {
+      background: var(--signal-red);
+      color: var(--black);
+      border-color: var(--signal-red);
+      box-shadow: 0 0 15px rgba(255, 0, 51, 0.6);
+    }
+
+    /* Settings toggle */
+    .settings-toggle {
+      background: var(--black);
+      border: 1px solid var(--border-gray);
+      color: var(--text-gray);
+      font-size: 16px;
+      cursor: pointer;
+      padding: 4px 10px;
+      margin-right: 8px;
+      transition: all 0.2s;
+      font-family: 'Share Tech Mono', monospace;
+    }
+
+    .settings-toggle:hover {
+      background: var(--neon-green);
+      color: var(--black);
+      border-color: var(--neon-green);
+      box-shadow: 0 0 15px var(--neon-green-glow);
+    }
+
+    /* Settings panel */
+    .settings-panel {
+      display: none;
+      background: var(--panel-gray);
+      border: 1px solid var(--border-gray);
+      border-top: 2px solid var(--neon-green);
+      padding: 12px;
+      margin-bottom: 12px;
+      box-shadow: inset 0 2px 0 rgba(0, 255, 65, 0.1);
+      animation: slideDown 0.3s ease-out;
+    }
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .settings-panel.visible {
+      display: block;
+    }
+
+    .settings-panel label {
+      display: block;
+      font-size: 12px;
+      color: var(--neon-green);
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-weight: 600;
+      font-family: 'Share Tech Mono', monospace;
+    }
+
+    .settings-panel input {
+      width: 100%;
+      padding: 8px 10px;
+      background: var(--black);
+      border: 1px solid var(--border-gray);
+      color: var(--neon-green);
+      font-size: 14px;
+      font-family: 'Share Tech Mono', monospace;
+      transition: all 0.2s;
+    }
+
+    .settings-panel input:focus {
+      outline: none;
+      border-color: var(--neon-green);
+      box-shadow: inset 0 0 10px rgba(0, 255, 65, 0.1), 0 0 5px var(--neon-green-glow);
+    }
+
+    .system-prompt-textarea {
+      width: 100%;
+      padding: 8px 10px;
+      background: var(--black);
+      border: 1px solid var(--border-gray);
+      color: var(--neon-green);
+      font-size: 13px;
+      font-family: 'Share Tech Mono', monospace;
+      resize: vertical;
+      line-height: 1.5;
+      transition: all 0.2s;
+    }
+
+    .system-prompt-textarea:focus {
+      outline: none;
+      border-color: var(--neon-green);
+      box-shadow: inset 0 0 10px rgba(0, 255, 65, 0.1), 0 0 5px var(--neon-green-glow);
+    }
+
+    .settings-note {
+      font-size: 11px;
+      color: var(--text-gray);
+      margin-top: 6px;
+      font-family: 'Share Tech Mono', monospace;
+      letter-spacing: 0.5px;
+    }
+
+    /* Input section */
+    .input-section {
+      margin-bottom: 12px;
+      position: relative;
+    }
+
+    .input-section label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: var(--neon-green);
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      font-weight: 600;
+      font-family: 'Share Tech Mono', monospace;
+      padding: 4px 8px;
+      background: var(--panel-gray);
+      border-left: 2px solid var(--neon-green);
+    }
+
+    .input-section label::before {
+      content: '▸';
+      color: var(--neon-green);
+      font-size: 12px;
+    }
+
+    .input-section textarea {
+      width: 100%;
+      height: 90px;
+      padding: 10px;
+      background: var(--black);
+      border: 1px solid var(--border-gray);
+      color: var(--neon-green);
+      font-size: 15px;
+      resize: none;
+      font-family: 'Rajdhani', sans-serif;
+      line-height: 1.5;
+      transition: all 0.2s;
+      box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.8);
+    }
+
+    .input-section textarea:focus {
+      outline: none;
+      border-color: var(--neon-green);
+      box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.8), 0 0 10px var(--neon-green-glow);
+      background: var(--dark-gray);
+    }
+
+    .input-section textarea::placeholder {
+      color: var(--text-gray);
+      font-style: italic;
+    }
+
+    /* Amplify button */
+    .amplify-btn {
+      width: 100%;
+      padding: 0;
+      background: var(--black);
+      border: 2px solid var(--neon-green);
+      color: var(--neon-green);
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.15s;
+      margin-bottom: 12px;
+      position: relative;
+      overflow: hidden;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      font-family: 'Share Tech Mono', monospace;
+      box-shadow: 0 0 20px var(--neon-green-glow), inset 0 0 20px rgba(0, 0, 0, 0.8);
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .amplify-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, var(--neon-green), transparent);
+      transition: left 0.5s;
+    }
+
+    .amplify-btn:hover::before {
+      left: 100%;
+    }
+
+    .amplify-btn:hover {
+      background: var(--neon-green);
+      color: var(--black);
+      box-shadow: 0 0 30px var(--neon-green-shadow), inset 0 0 20px rgba(0, 255, 65, 0.3);
+      text-shadow: none;
+    }
+
+    .amplify-btn:active {
+      transform: scale(0.98);
+    }
+
+    .amplify-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      animation: processing 1.5s ease-in-out infinite;
+    }
+
+    @keyframes processing {
+      0%, 100% { box-shadow: 0 0 10px var(--neon-green-glow); }
+      50% { box-shadow: 0 0 25px var(--neon-green-shadow); }
+    }
+
+    /* Output section */
+    .output-section {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      position: relative;
+    }
+
+    .output-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+      padding: 4px 8px;
+      background: var(--panel-gray);
+      border-left: 2px solid var(--neon-green);
+    }
+
+    .output-header label {
+      font-size: 12px;
+      color: var(--neon-green);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      font-weight: 600;
+      font-family: 'Share Tech Mono', monospace;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .output-header label::before {
+      content: '▸';
+      font-size: 12px;
+    }
+
+    .copy-btn {
+      background: var(--black);
+      border: 1px solid var(--border-gray);
+      color: var(--neon-green);
+      font-size: 12px;
+      padding: 4px 10px;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-weight: 600;
+      font-family: 'Share Tech Mono', monospace;
+    }
+
+    .copy-btn:hover {
+      background: var(--neon-green);
+      color: var(--black);
+      border-color: var(--neon-green);
+      box-shadow: 0 0 10px var(--neon-green-glow);
+    }
+
+    .copy-btn.copied {
+      background: var(--neon-green);
+      color: var(--black);
+      border-color: var(--neon-green);
+      animation: copySuccess 0.5s ease-out;
+    }
+
+    @keyframes copySuccess {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+      100% { transform: scale(1); }
+    }
+
+    .output-box {
+      flex: 1;
+      background: var(--black);
+      border: 1px solid var(--border-gray);
+      padding: 12px;
+      overflow-y: auto;
+      font-size: 15px;
+      line-height: 1.6;
+      color: var(--neon-green);
+      user-select: text;
+      font-family: 'Rajdhani', sans-serif;
+      box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.9);
+      position: relative;
+    }
+
+    .output-box::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--neon-green), transparent);
+      opacity: 0.5;
+    }
+
+    .output-box.empty {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-gray);
+      font-style: italic;
+      font-size: 14px;
+    }
+
+    /* Loading state */
+    .loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      color: var(--neon-green);
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    .loading-spinner {
+      width: 16px;
+      height: 16px;
+      border: 2px solid var(--border-gray);
+      border-top-color: var(--neon-green);
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+      box-shadow: 0 0 10px var(--neon-green-glow);
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Error state */
+    .error {
+      color: var(--signal-red);
+      background: rgba(255, 0, 51, 0.1);
+      border: 1px solid var(--signal-red);
+      padding: 10px;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      box-shadow: 0 0 10px rgba(255, 0, 51, 0.3);
+    }
+
+    /* Scrollbar styling */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--black);
+      border-left: 1px solid var(--border-gray);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--border-gray);
+      border-left: 2px solid var(--neon-green);
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--panel-gray);
+      box-shadow: 0 0 5px var(--neon-green-glow);
+    }
+
+    /* VU Meter decoration */
+    .container::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg,
+        var(--neon-green) 0%,
+        var(--neon-green) 70%,
+        #fbbf24 70%,
+        #fbbf24 90%,
+        var(--signal-red) 90%,
+        var(--signal-red) 100%);
+      opacity: 0.6;
+      box-shadow: 0 0 10px var(--neon-green-glow);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="title-bar">
+      <span class="title">Prompt Amplifier</span>
+      <div>
+        <button class="settings-toggle" id="settingsToggle" title="Settings">CFG</button>
+        <button class="close-btn" id="closeBtn">×</button>
+      </div>
+    </div>
+
+    <div class="settings-panel" id="settingsPanel">
+      <label for="apiKey">OpenAI API Key</label>
+      <input type="password" id="apiKey" placeholder="sk-..." autocomplete="off">
+      <p class="settings-note">Your API key is stored locally and never shared.</p>
+
+      <label for="systemPrompt" style="margin-top: 15px;">System Prompt</label>
+      <textarea id="systemPrompt" rows="8" class="system-prompt-textarea" placeholder="Enter custom system prompt..."></textarea>
+      <p class="settings-note">Customize how the AI improves your prompts.</p>
+    </div>
+
+    <div class="input-section">
+      <label>Your Prompt</label>
+      <textarea id="inputPrompt" placeholder="Enter your prompt here..."></textarea>
+    </div>
+
+    <button class="amplify-btn" id="amplifyBtn">▶ Amplify Signal</button>
+
+    <div class="output-section">
+      <div class="output-header">
+        <label>Output Signal</label>
+        <button class="copy-btn" id="copyBtn">Copy</button>
+      </div>
+      <div class="output-box empty" id="outputBox">
+        Amplified signal output ready...
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const { ipcRenderer } = require('electron');
+    const OpenAI = require('openai');
+
+    // DOM Elements
+    const closeBtn = document.getElementById('closeBtn');
+    const settingsToggle = document.getElementById('settingsToggle');
+    const settingsPanel = document.getElementById('settingsPanel');
+    const apiKeyInput = document.getElementById('apiKey');
+    const systemPromptInput = document.getElementById('systemPrompt');
+    const inputPrompt = document.getElementById('inputPrompt');
+    const amplifyBtn = document.getElementById('amplifyBtn');
+    const outputBox = document.getElementById('outputBox');
+    const copyBtn = document.getElementById('copyBtn');
+
+    // State
+    let amplifiedText = '';
+
+    // Default system prompt
+    const defaultSystemPrompt = `You are an expert prompt engineer. Your task is to take a user's simple prompt and transform it into a comprehensive, well-structured prompt that will get much better results from an AI assistant.
+
+When improving prompts, you should:
+1. Add relevant context and background information
+2. Clarify the desired output format
+3. Include specific requirements or constraints
+4. Add examples if helpful
+5. Break down complex requests into clear steps
+6. Specify the tone, style, or perspective if relevant
+7. Include any edge cases to consider
+
+Return ONLY the improved prompt, without any explanation or meta-commentary. The improved prompt should be ready to use directly.`;
+
+    // Load saved API key
+    const savedApiKey = localStorage.getItem('openai_api_key') || '';
+    apiKeyInput.value = savedApiKey;
+
+    // Load saved system prompt or use default
+    const savedSystemPrompt = localStorage.getItem('system_prompt') || defaultSystemPrompt;
+    systemPromptInput.value = savedSystemPrompt;
+
+    // Save API key on change
+    apiKeyInput.addEventListener('change', () => {
+      localStorage.setItem('openai_api_key', apiKeyInput.value.trim());
+    });
+
+    // Save system prompt on change
+    systemPromptInput.addEventListener('change', () => {
+      localStorage.setItem('system_prompt', systemPromptInput.value.trim());
+    });
+
+    // Close button
+    closeBtn.addEventListener('click', () => {
+      ipcRenderer.send('hide-window');
+    });
+
+    // Settings toggle
+    settingsToggle.addEventListener('click', () => {
+      settingsPanel.classList.toggle('visible');
+    });
+
+    // Amplify button
+    amplifyBtn.addEventListener('click', async () => {
+      const prompt = inputPrompt.value.trim();
+      const apiKey = apiKeyInput.value.trim();
+
+      if (!apiKey) {
+        settingsPanel.classList.add('visible');
+        apiKeyInput.focus();
+        outputBox.innerHTML = '<div class="error">Please enter your OpenAI API key in settings.</div>';
+        outputBox.classList.remove('empty');
+        return;
+      }
+
+      if (!prompt) {
+        inputPrompt.focus();
+        return;
+      }
+
+      // Show loading state
+      amplifyBtn.disabled = true;
+      amplifyBtn.innerHTML = '<span class="loading"><span class="loading-spinner"></span> Processing Signal...</span>';
+      outputBox.innerHTML = '<span class="loading"><span class="loading-spinner"></span> Amplifying...</span>';
+      outputBox.classList.remove('empty');
+
+      try {
+        const openai = new OpenAI({ apiKey, dangerouslyAllowBrowser: true });
+
+        // Use custom system prompt from settings
+        const systemPrompt = systemPromptInput.value.trim() || defaultSystemPrompt;
+
+        const response = await openai.chat.completions.create({
+          model: 'gpt-4o',
+          messages: [
+            {
+              role: 'system',
+              content: systemPrompt
+            },
+            {
+              role: 'user',
+              content: `Please improve this prompt:\n\n${prompt}`
+            }
+          ],
+          temperature: 0.7,
+          max_tokens: 1500
+        });
+
+        amplifiedText = response.choices[0].message.content;
+        outputBox.textContent = amplifiedText;
+        outputBox.classList.remove('empty');
+
+      } catch (error) {
+        console.error('Error:', error);
+        let errorMessage = 'An error occurred. Please try again.';
+
+        if (error.message.includes('API key')) {
+          errorMessage = 'Invalid API key. Please check your OpenAI API key in settings.';
+        } else if (error.message.includes('rate limit')) {
+          errorMessage = 'Rate limit exceeded. Please wait a moment and try again.';
+        } else if (error.message.includes('network')) {
+          errorMessage = 'Network error. Please check your internet connection.';
+        }
+
+        outputBox.innerHTML = `<div class="error">${errorMessage}</div>`;
+      } finally {
+        amplifyBtn.disabled = false;
+        amplifyBtn.innerHTML = '▶ Amplify Signal';
+      }
+    });
+
+    // Copy button
+    copyBtn.addEventListener('click', async () => {
+      if (!amplifiedText) return;
+
+      try {
+        await navigator.clipboard.writeText(amplifiedText);
+        copyBtn.textContent = '✓ Copied';
+        copyBtn.classList.add('copied');
+
+        setTimeout(() => {
+          copyBtn.textContent = 'Copy';
+          copyBtn.classList.remove('copied');
+        }, 2000);
+      } catch (err) {
+        console.error('Failed to copy:', err);
+      }
+    });
+
+    // Keyboard shortcuts
+    document.addEventListener('keydown', (e) => {
+      // Escape to close
+      if (e.key === 'Escape') {
+        ipcRenderer.send('hide-window');
+      }
+      // Ctrl/Cmd + Enter to amplify
+      if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+        amplifyBtn.click();
+      }
+    });
+
+    // Focus input on window show
+    window.addEventListener('focus', () => {
+      if (!settingsPanel.classList.contains('visible')) {
+        inputPrompt.focus();
+      }
+    });
+  </script>
+</body>
+</html>
