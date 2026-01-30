@@ -7,7 +7,12 @@
     "start": "electron .",
     "build": "electron-builder"
   },
-  "keywords": ["electron", "tray", "openai", "prompt"],
+  "keywords": [
+    "electron",
+    "tray",
+    "openai",
+    "prompt"
+  ],
   "author": "Seth",
   "license": "MIT",
   "devDependencies": {
@@ -15,6 +20,7 @@
     "electron-builder": "^24.9.1"
   },
   "dependencies": {
+    "lucide": "^0.563.0",
     "openai": "^4.24.0"
   },
   "build": {

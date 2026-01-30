@@ -22,7 +22,8 @@
       "Bash(xxd:*)",
       "Bash(pngcheck:*)",
       "Bash(node_modules/.bin/electron:*)",
-      "Bash(file:*)"
+      "Bash(file:*)",
+      "WebFetch(domain:api.polar.sh)"
     ]
   }
 }

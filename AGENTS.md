@@ -6,8 +6,7 @@ This repository hosts Prompt Amplifier, a tray-based Electron app that enhances 
 
 - `main.js`: Electron main process, tray lifecycle, window positioning, and app events.
 - `index.html`: Renderer UI, inline CSS, and client-side logic (OpenAI calls, clipboard).
-- `create-icon.js`, `create-template-icon.js`: Utility scripts for icon generation.
-- `icon.png`, `iconTemplate.png`, `trayIcon.png`: App and tray assets.
+- `package.json`: Dependencies and Electron build configuration.
 - `dist/`: Build output from packaging (generated).
 
 ## Build, Test, and Development Commands
@@ -25,7 +24,7 @@ This repository hosts Prompt Amplifier, a tray-based Electron app that enhances 
 
 ## Testing Guidelines
 
-- No automated tests are present. Do a manual smoke test: tray icon shows, window opens/closes, prompt amplifies, copy button works, and shortcuts (`Ctrl/Cmd + Enter`, `Escape`) behave.
+- No automated tests are present. Do a manual smoke test: tray indicator (⚡ title) shows, window opens/closes, prompt amplifies, copy button works, and shortcuts (`Ctrl/Cmd + Enter`, `Escape`) behave.
 - If adding tests, place them under `tests/` or `__tests__/` and add an `npm` script.
 
 ## Commit & Pull Request Guidelines

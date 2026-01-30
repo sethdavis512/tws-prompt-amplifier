@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Prompt Amplifier is a system tray-based Electron application that enhances user prompts using OpenAI's GPT-4. The app lives in the system tray for quick access, provides a frameless popup window for interaction, and uses vanilla JavaScript with inline styles.
+Prompt Amplifier is a system tray-based Electron application that enhances user prompts using OpenAI's GPT-5.2. The app lives in the system tray for quick access, provides a frameless popup window for interaction, and uses vanilla JavaScript with inline styles.
 
 ## Development Commands
 
@@ -24,10 +24,11 @@ This is a standard Electron app with two distinct processes:
 ### Key Design Patterns
 
 - **Tray-First Design**: The app uses `skipTaskbar: true` and lives exclusively in the system tray. On macOS, the dock is hidden via `app.dock.hide()`
+- **Text-Based Tray Indicator**: The tray uses an empty image and sets a title glyph (`⚡`) via `tray.setTitle()`
 - **Single Instance Lock**: Uses `app.requestSingleInstanceLock()` to ensure only one instance runs at a time
 - **Frameless Window**: The popup window is frameless (`frame: false`) with custom title bar and positioning logic
 - **Auto-Hide Behavior**: Window hides on blur and prevents quit on close (unless `app.isQuitting` flag is set)
-- **Window Positioning**: `positionWindowNearTray()` contains platform-specific logic to position the popup near the tray icon
+- **Window Positioning**: `positionWindowNearTray()` contains platform-specific logic to position the popup near the tray area
 
 ### Data Storage
 
@@ -48,10 +49,6 @@ This is a standard Electron app with two distinct processes:
 ```
 main.js                    - Main process (app lifecycle, tray, window)
 index.html                 - Renderer process (UI, CSS, logic)
-create-icon.js            - Utility to generate tray icons
-create-template-icon.js   - Utility for macOS template icons
-icon.png                  - Main tray icon
-iconTemplate.png          - macOS template icon
 package.json              - Dependencies and build config
 ```
 
@@ -81,7 +78,7 @@ Implemented in renderer's `keydown` event listener:
 
 No automated tests exist. Manual testing checklist:
 
-1. Tray icon appears in system tray
+1. Tray indicator (⚡ title) appears in system tray
 2. Click tray to open/close window
 3. Window positions correctly near tray
 4. Settings panel opens/closes

@@ -4,7 +4,7 @@ A tray-based Electron app that takes your simple prompts and transforms them int
 
 ## Features
 
-- **System Tray Integration**: Lives in your system tray for quick access
+- **System Tray Integration**: Lives in your system tray for quick access (⚡ title indicator)
 - **Prompt Enhancement**: Uses GPT-5.2 to improve your prompts with better context, structure, and clarity
 - **One-Click Copy**: Easily copy the amplified prompt to your clipboard
 - **Keyboard Shortcuts**:
@@ -42,7 +42,7 @@ A tray-based Electron app that takes your simple prompts and transforms them int
 
 ## Usage
 
-1. Click the tray icon to open the popup
+1. Click the tray indicator (⚡) to open the popup
 2. Type your simple prompt in the input field
 3. Click "🚀 Amplify Prompt" or press `Ctrl/Cmd + Enter`
 4. Wait for the AI to generate an improved version
@@ -60,9 +60,9 @@ This will create installers for your platform in the `dist` folder.
 
 ## Customization
 
-### Changing the Icon
+### Changing the Tray Indicator
 
-Replace `icon.png` with your own 32x32 or larger PNG file. The app will automatically resize it for the tray.
+Edit the tray title in `main.js` (`tray.setTitle('⚡')`) to use a different glyph or text.
 
 ### Modifying the Prompt Enhancement
 
