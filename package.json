@@ -21,7 +21,8 @@
   },
   "dependencies": {
     "lucide": "^0.563.0",
-    "openai": "^4.24.0"
+    "openai": "^4.24.0",
+    "vue": "^3.5.27"
   },
   "build": {
     "appId": "com.promptamplifier.app",
